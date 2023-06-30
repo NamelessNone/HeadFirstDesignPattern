@@ -45,8 +45,8 @@ namespace C6_CommandPattern
             ICommand noCmd = new NoCommand();
             for (int i = 0; i < 7; i++)
             {
-                _onCommands[i] = noCmd;
-                _offCommands[i] = noCmd;
+                _onCommands.Add(noCmd);
+                _offCommands.Add(noCmd);
             }
 
             _lastCommand = noCmd;

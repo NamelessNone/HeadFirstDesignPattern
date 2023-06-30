@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace C6_CommandPattern
 {
@@ -6,6 +7,38 @@ namespace C6_CommandPattern
     {
         void Execute();
         void Undo();
+    }
+
+    public class MacroCommand : ICommand
+    {
+        private List<ICommand> _commands;
+
+        public MacroCommand(IEnumerable<ICommand> commands)
+        {
+            _commands = new List<ICommand>();
+            foreach (var command in commands)
+            {
+                _commands.Add(command);
+            }
+        }
+
+        public void Execute()
+        {
+            foreach (var command in _commands)
+            {
+                command.Execute();
+            }
+        }
+
+        public void Undo()
+        {
+            _commands.Reverse();
+            foreach (var command in _commands)
+            {
+                command.Undo();
+            }
+            _commands.Reverse();
+        }
     }
 
     public class NoCommand : ICommand
@@ -126,11 +159,64 @@ namespace C6_CommandPattern
     {
         private CeilingFan _ceilingFan;
         private CeilingFan.State _prevSpeed;
+
+        public CeilingFanHighCmd(CeilingFan fan)
+        {
+            _ceilingFan = fan;
+        }
         
         public void Execute()
         {
             _prevSpeed = _ceilingFan.CurrentSpeed;
             _ceilingFan.SetSpeed(CeilingFan.State.HIGH);
+        }
+        
+        public void Undo()
+        {
+            var curSpeed = _ceilingFan.CurrentSpeed;
+            _ceilingFan.SetSpeed(_prevSpeed);
+            _prevSpeed = curSpeed;
+        }
+    }
+    
+    public class CeilingFanStopCmd : ICommand
+    {
+        private CeilingFan _ceilingFan;
+        private CeilingFan.State _prevSpeed;
+
+        public CeilingFanStopCmd(CeilingFan fan)
+        {
+            _ceilingFan = fan;
+        }
+        
+        public void Execute()
+        {
+            _prevSpeed = _ceilingFan.CurrentSpeed;
+            _ceilingFan.SetSpeed(CeilingFan.State.OFF);
+        }
+        
+        public void Undo()
+        {
+            var curSpeed = _ceilingFan.CurrentSpeed;
+            _ceilingFan.SetSpeed(_prevSpeed);
+            _prevSpeed = curSpeed;
+        }
+    }
+    
+    public class CeilingFanMediumCmd : ICommand
+    {
+        private CeilingFan _ceilingFan;
+        private CeilingFan.State _prevSpeed;
+
+        public CeilingFanMediumCmd(CeilingFan fan)
+        {
+            _ceilingFan = fan;
+        }
+        
+        public void Execute()
+        {
+            _prevSpeed = _ceilingFan.CurrentSpeed;
+            _ceilingFan.SetSpeed(CeilingFan.State.MEDIUM);
         }
         
         public void Undo()
