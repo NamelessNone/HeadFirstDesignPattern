@@ -2,9 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 
 namespace C9_Iterator_Composite_Pattern
 {
+
+    public interface IMenu
+    {
+        IEnumerator<MenuItem> GetEnumerator();
+    }
     public class MenuItem
     {
         private string _name;
@@ -28,7 +34,7 @@ namespace C9_Iterator_Composite_Pattern
     }
     
     //Lou's Pancake House
-    public class PanCakeHouseMenu
+    public class PanCakeHouseMenu: IMenu
     {
         private List<MenuItem> _menuItems;
 
@@ -48,7 +54,7 @@ namespace C9_Iterator_Composite_Pattern
         }
 
         // public List<MenuItem> GetItems() => _menuItems;
-        public IEnumerator<MenuItem> GetEnumerator => _menuItems.GetEnumerator();
+        public IEnumerator<MenuItem> GetEnumerator() => _menuItems.GetEnumerator();
     }
     
     //Mel's Diner
@@ -84,9 +90,29 @@ namespace C9_Iterator_Composite_Pattern
         // {
         //     return new DinerMenuIterator(_menuItems);
         // }
-        public IEnumerator<MenuItem> GetEnumerator => _menuItems.GetEnumerator() as IEnumerator<MenuItem>;
+        public IEnumerator<MenuItem> GetEnumerator() => _menuItems.GetEnumerator() as IEnumerator<MenuItem>;
     }
     
+    
+    //
+    public class CafeMenu: IMenu
+    {
+        private Hashtable _menuItems = new Hashtable();
+        public CafeMenu()
+        {
+            AddItem("Veggie Burger and Air Fries", "Veggie burger on a whole wheat bun, lettuce, tomato and fries",
+                true, 3.99);
+            AddItem("Soup of the day", "A cup of the soup of the day, with a side salad", false, 3.69);
+        }
+        public void AddItem(string name, string desc, bool isVeg, double price)
+        {
+            var item = new MenuItem(name, desc, isVeg, price);
+            _menuItems.Add(item.Name, item);
+        }
+        // public Hashtable GetItems() => _menuItems;
+        public IEnumerator<MenuItem> GetEnumerator() => _menuItems.Values.GetEnumerator() as IEnumerator<MenuItem>;
+
+    }
     
     
 }
